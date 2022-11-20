@@ -30,6 +30,7 @@ sources:
           - name: order_id
             description: "Campo clave pedido"
             tests:
+            - not null
             - relationships:
                   to: source('sql_server_dbo','orders')
                   field: order_id
@@ -37,11 +38,12 @@ sources:
           - name: product_id
             description: "Campo clave producto"
             tests:
+            - not null
             - relationships:
                   to: source('sql_server_dbo','products')
                   field: product_id
 
-          - name: quantity as cantidad
+          - name: quantity
             description: "Cantidad del producto"
             tests:
             - dbt_utils.expression_is_true:
@@ -78,7 +80,7 @@ sources:
                   to: source('sql_server_dbo','users')
                   field: user_id
 
-          - name: shipping_cost as coste_envio
+          - name: shipping_cost
             description: "Coste del envio"
             tests:
             - positive_values
@@ -88,13 +90,13 @@ sources:
             tests:
             - not null
 
-          - name: order_cost as coste_pedido
+          - name: order_cost
             description: "Coste del pedido"
             tests:
             - not null
             - positive_values
 
-          - name: status as estado
+          - name: status
             description: "Estado del pedido"
             tests:
             - accepted_values: 
@@ -103,7 +105,7 @@ sources:
           - name: delivered_at 
             description: "Fecha de entrega"
 
-          - name: order_total as coste_total
+          - name: order_total
             description: "Pedido total"
             tests:
             - positive_values
@@ -152,13 +154,15 @@ sources:
           - name: price
             description: "Precio del producto"
             tests:
-            - positive_values
+            - dbt_utils.expression_is_true:
+                expression: '>0'
             - not null
 
           - name: inventory
             description: "Inventario del producto"
             tests:
-            - positive_values
+            - dbt_utils.expression_is_true:
+                expression: '>0'
 
           - name: _fivetran_deleted
             description: "Fecha de borrado de fivetran"
@@ -226,21 +230,51 @@ sources:
         columns:
           - name: event_id
             description: "Campo clave"
+            tests:
+            - not null
+            - unique
+            
           - name: created_at
             description: "Fecha de creacion del registro"
+
           - name: product_id
             description: "Campo clave del producto"
+            tests:
+            - relationships:
+                  to: source('sql_server_dbo','products')
+                  field: product_id
+
           - name: event_type
             description: "Tipo de evento"
+
           - name: user_id
             description: "Campo clave del usuario"
+            tests:
+            - not null
+            - relationships:
+                to: source('sql_server_dbo', 'users')
+                field: user_id
+            
           - name: session_id
             description: "Campo clave de la sesion"
+            tests:
+            - not null
+
           - name: order_id
             description: "Campo clave del pedido"
+            tests:
+            - not null
+            - relationships:
+                  to: source('sql_server_dbo','orders')
+                  field: order_id
+
           - name: page_url
             description: "URL del evento"
+            tests:
+            - not null
+
           - name: _fivetran_deleted
             description: "Campo de metadata fivetran"
+            
           - name: _fivetran_synced
             description: "Fecha de sincronizacion fivetran"
