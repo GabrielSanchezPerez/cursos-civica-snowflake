@@ -35,7 +35,7 @@ sources:
           - name: order_id
             description: "Campo clave pedido"
             tests:
-            - not null
+            - not_null
             - relationships:
                   to: source('sql_server_dbo','orders')
                   field: order_id
@@ -43,7 +43,7 @@ sources:
           - name: product_id
             description: "Campo clave producto"
             tests:
-            - not null
+            - not_null
             - relationships:
                   to: source('sql_server_dbo','products')
                   field: product_id
@@ -72,7 +72,7 @@ sources:
             description: "Campo clave del pedido"
             tests:
             - unique
-            - not null
+            - not_null
 
           - name: estimated_delivery_at as fecha_estimada_entrega
             description: "Fecha estimada de entrega"
@@ -80,7 +80,7 @@ sources:
           - name: user_id
             description: "Campo clave de usuario"
             tests:
-            - not null
+            - not_null
             - relationships:
                   to: source('sql_server_dbo','users')
                   field: user_id
@@ -93,12 +93,12 @@ sources:
           - name: address_id
             description: "Campo clave de direccion"
             tests:
-            - not null
+            - not_null
 
           - name: order_cost
             description: "Coste del pedido"
             tests:
-            - not null
+            - not_null
             - positive_values
 
           - name: status
@@ -114,7 +114,7 @@ sources:
             description: "Pedido total"
             tests:
             - positive_values
-            - not null
+            - not_null
 
           - name: promo_id
             description: "Campo clave de promocion"
@@ -146,7 +146,7 @@ sources:
             description: "Campo clave del producto"
             tests:
             - unique
-            - not null
+            - not_null
             - relationships:
                   to: source('sql_server_dbo','order_items')
                   field: product_id
@@ -154,14 +154,14 @@ sources:
           - name: name
             description: "Nombre del producto"
             tests:
-            - not null
+            - not_null
 
           - name: price
             description: "Precio del producto"
             tests:
             - dbt_utils.expression_is_true:
                 expression: '>0'
-            - not null
+            - not_null
 
           - name: inventory
             description: "Inventario del producto"
@@ -186,10 +186,10 @@ sources:
             description: "Campo clave del usuario"
             tests:
             - unique
-            - not null
-            - relationships:
-                  to: source('sql_server_dbo','orders')
-                  field: user_id
+            - not_null
+#            - relationships:
+#                  to: source('sql_server_dbo','orders')
+#                  field: user_id
 
           - name: created_at
             description: "Fecha creacion"
@@ -212,12 +212,12 @@ sources:
           - name: address_id
             description: "Campo clave foranea de direccion"
             tests:
-            - not null
+            - not_null
 
           - name: first_name
             description: "Nombre"
             tests:
-            - not null
+            - not_null
 
           - name: _fivetran_deleted
             description: "Fecha borrado fivetran"
@@ -236,7 +236,7 @@ sources:
           - name: event_id
             description: "Campo clave"
             tests:
-            - not null
+            - not_null
             - unique
             
           - name: created_at
@@ -245,9 +245,9 @@ sources:
           - name: product_id
             description: "Campo clave del producto"
             tests:
-            - relationships:
-                  to: source('sql_server_dbo','products')
-                  field: product_id
+#            - relationships:
+#                  to: source('sql_server_dbo','products')
+#                  field: product_id
 
           - name: event_type
             description: "Tipo de evento"
@@ -255,7 +255,7 @@ sources:
           - name: user_id
             description: "Campo clave del usuario"
             tests:
-            - not null
+            - not_null
             - relationships:
                 to: source('sql_server_dbo', 'users')
                 field: user_id
@@ -263,20 +263,20 @@ sources:
           - name: session_id
             description: "Campo clave de la sesion"
             tests:
-            - not null
+            - not_null
 
           - name: order_id
             description: "Campo clave del pedido"
             tests:
-            - not null
-            - relationships:
-                  to: source('sql_server_dbo','orders')
-                  field: order_id
+            - not_null
+#            - relationships:
+#                  to: source('sql_server_dbo','orders')
+#                  field: order_id
 
           - name: page_url
             description: "URL del evento"
             tests:
-            - not null
+#            - not_null
 
           - name: _fivetran_deleted
             description: "Campo de metadata fivetran"
