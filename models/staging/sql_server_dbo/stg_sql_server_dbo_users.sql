@@ -17,7 +17,6 @@ renamed_casted AS (
         , TRIM(address_id) AS address_id
         , TRIM(UPPER(last_name)) AS last_name
         , SUBSTR(created_at, 1, 10) AS created_at
-        , phone_number
         , {{validador_telefono(phone_number)}} as phone_number
         , TRIM(UPPER(first_name)) AS first_name
         , TRIM(email) AS email
