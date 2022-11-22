@@ -1,0 +1,285 @@
+version: 2
+
+
+sources:
+
+  - name: sql_server_dbo # name of the source 
+    schema: sql_server_dbo # this is the schema our raw data lives in
+    #database: dev_bronze_db_alumno_6 # this is the name of our database
+    database: |  
+        {%- if  target.name == 'user_dev' -%} dev_bronze_db_alumno_6 
+        {%- elif target.name == 'ci' -%} dev_bronze_db_alumno_6 
+        {%- elif target.name == 'pro'-%} pro_bronze_db_alumno_6
+        {%- else -%} {{target.database}}_bronze_db_alumno_6
+        {%- endif -%}
+# SE LE INDICA SI LE PONE COMILLAS A LOS CAMPOS PARA SNOWFLAKE
+    quoting:
+      database: false
+      schema: false
+      identifier: false #SI SE PONE A TRUE NOS QUITAMOS EL PROBLEMA DEL CASE SENSITIVE PORQUE LO METE ENTRE ""
+
+# SE INDICA EL PERIODO DE TIEMPO EN EL QUE QUEREMOS QUE ALERTE SI LOS DATOS NO ESTÁN CAMBIADOS
+#    freshness:
+#      warn_after: {count: 20, period: hour}
+#      error_after: {count: 48, period: hour}
+
+
+
+# SE INDICA QUE TABLA O TABLAS SON LOS ORIGENES
+
+    tables:
+
+      - name: order_items
+        description: "Tabla donde aparece la cantidad de productos que tiene cada pedido"
+        columns:
+          - name: order_id
+            description: "Campo clave pedido"
+            tests:
+            - not null
+            - relationships:
+                  to: source('sql_server_dbo','orders')
+                  field: order_id
+
+          - name: product_id
+            description: "Campo clave producto"
+            tests:
+            - not null
+            - relationships:
+                  to: source('sql_server_dbo','products')
+                  field: product_id
+
+          - name: quantity
+            description: "Cantidad del producto"
+            tests:
+            - dbt_utils.expression_is_true:
+                expression: '>0'
+
+          - name: _fivetran_deleted
+            description: "Fecha de borrado de fivetran"
+
+          - name: _fivetran_synced
+            description: "Fecha de sincronizacion de fivetran"
+
+
+
+
+
+
+      - name: orders
+        description: "Tabla de hechos de pedidos"
+        columns:
+          - name: order_id
+            description: "Campo clave del pedido"
+            tests:
+            - unique
+            - not null
+
+          - name: estimated_delivery_at as fecha_estimada_entrega
+            description: "Fecha estimada de entrega"
+
+          - name: user_id
+            description: "Campo clave de usuario"
+            tests:
+            - not null
+            - relationships:
+                  to: source('sql_server_dbo','users')
+                  field: user_id
+
+          - name: shipping_cost
+            description: "Coste del envio"
+            tests:
+            - positive_values
+
+          - name: address_id
+            description: "Campo clave de direccion"
+            tests:
+            - not null
+
+          - name: order_cost
+            description: "Coste del pedido"
+            tests:
+            - not null
+            - positive_values
+
+          - name: status
+            description: "Estado del pedido"
+            tests:
+            - accepted_values: 
+                  values: ['delivered', 'preparing', 'shipped'] 
+
+          - name: delivered_at 
+            description: "Fecha de entrega"
+
+          - name: order_total
+            description: "Pedido total"
+            tests:
+            - positive_values
+            - not null
+
+          - name: promo_id
+            description: "Campo clave de promocion"
+
+          - name: created_at
+            description: "Fecha de creacion del registro"
+
+          - name: tracking_id
+            description: "Campo clave de tracking"
+
+          - name: shipping_service
+            description: "Servicio de reparto"
+
+          - name: _fivetran_deleted
+            description: "Fecha de borrado fivetran"
+
+          - name: _fivetran_synced
+            description: "Fecha de sincronizacion fivetran"
+
+
+
+
+
+
+      - name: products
+        description: "Tabla de productos"
+        columns:
+          - name: product_id
+            description: "Campo clave del producto"
+            tests:
+            - unique
+            - not null
+            - relationships:
+                  to: source('sql_server_dbo','order_items')
+                  field: product_id
+
+          - name: name
+            description: "Nombre del producto"
+            tests:
+            - not null
+
+          - name: price
+            description: "Precio del producto"
+            tests:
+            - dbt_utils.expression_is_true:
+                expression: '>0'
+            - not null
+
+          - name: inventory
+            description: "Inventario del producto"
+            tests:
+            - dbt_utils.expression_is_true:
+                expression: '>0'
+
+          - name: _fivetran_deleted
+            description: "Fecha de borrado de fivetran"
+
+          - name: _fivetran_synced
+            description: "Fecha de sincronizacion de fivetran"
+
+
+
+
+
+      - name: users
+        description: "Tabla de usuarios"
+        columns:
+          - name: user_id
+            description: "Campo clave del usuario"
+            tests:
+            - unique
+            - not null
+            - relationships:
+                  to: source('sql_server_dbo','orders')
+                  field: user_id
+
+          - name: created_at
+            description: "Fecha creacion"
+
+          - name: phone_number
+            description: "Numero de telefono del usuario"
+
+          - name: total_orders
+            description: "Pedidos totales del usuario"
+
+          - name: email
+            description: "Correo electronico"
+
+          - name: updated_at
+            description: "Fecha actualizacion"
+
+          - name: last_name
+            description: "Apellidos"
+
+          - name: address_id
+            description: "Campo clave foranea de direccion"
+            tests:
+            - not null
+
+          - name: first_name
+            description: "Nombre"
+            tests:
+            - not null
+
+          - name: _fivetran_deleted
+            description: "Fecha borrado fivetran"
+
+          - name: _fivetran_synced
+            description: "Fecha sincronizacion fivetran"
+
+
+
+
+
+
+      - name: events
+        description: "Tabla de los eventos de pedidos"
+        columns:
+          - name: event_id
+            description: "Campo clave"
+            tests:
+            - not null
+            - unique
+            
+          - name: created_at
+            description: "Fecha de creacion del registro"
+
+          - name: product_id
+            description: "Campo clave del producto"
+            tests:
+            - relationships:
+                  to: source('sql_server_dbo','products')
+                  field: product_id
+
+          - name: event_type
+            description: "Tipo de evento"
+
+          - name: user_id
+            description: "Campo clave del usuario"
+            tests:
+            - not null
+            - relationships:
+                to: source('sql_server_dbo', 'users')
+                field: user_id
+            
+          - name: session_id
+            description: "Campo clave de la sesion"
+            tests:
+            - not null
+
+          - name: order_id
+            description: "Campo clave del pedido"
+            tests:
+            - not null
+            - relationships:
+                  to: source('sql_server_dbo','orders')
+                  field: order_id
+
+          - name: page_url
+            description: "URL del evento"
+            tests:
+            - not null
+
+          - name: _fivetran_deleted
+            description: "Campo de metadata fivetran"
+            
+          - name: _fivetran_synced
+            description: "Fecha de sincronizacion fivetran"
