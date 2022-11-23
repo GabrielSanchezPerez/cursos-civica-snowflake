@@ -1,3 +1,9 @@
+{{
+  config(
+    materialized='table'
+  )
+}}
+
 {% set event_types = obtener_valores(source('sql_server_dbo', 'events'),'event_type') %}
 WITH stg_events AS (
     SELECT * 

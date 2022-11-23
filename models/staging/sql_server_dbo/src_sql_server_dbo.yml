@@ -88,7 +88,8 @@ sources:
           - name: shipping_cost
             description: "Coste del envio"
             tests:
-            - positive_values
+            - dbt_utils.expression_is_true:
+                expression: '>0'
 
           - name: address_id
             description: "Campo clave de direccion"
@@ -99,7 +100,8 @@ sources:
             description: "Coste del pedido"
             tests:
             - not_null
-            - positive_values
+            - dbt_utils.expression_is_true:
+                expression: '>0'
 
           - name: status
             description: "Estado del pedido"
@@ -113,7 +115,8 @@ sources:
           - name: order_total
             description: "Pedido total"
             tests:
-            - positive_values
+            - dbt_utils.expression_is_true:
+                expression: '>0'
             - not_null
 
           - name: promo_id
@@ -281,5 +284,36 @@ sources:
           - name: _fivetran_deleted
             description: "Campo de metadata fivetran"
             
+          - name: _fivetran_synced
+            description: "Fecha de sincronizacion fivetran"
+
+
+
+
+
+
+      - name: addresses
+        description: "Tabla de direcciones"
+        columns:
+          - name: address_id
+            description: "Campo clave de la direccion"
+            tests:
+            - unique
+            - not_null
+
+          - name: zipcode
+            description: "Codigo postal"
+            tests:
+            - dbt_utils.expression_is_true:
+                expression: '>0'
+                
+          - name: address
+            description: "Direccion"
+          - name: state
+            description: "Estado"
+          - name: country
+            description: "Pais"
+          - name: _fivetran_deleted
+            description: "Campo de metadata fivetran"
           - name: _fivetran_synced
             description: "Fecha de sincronizacion fivetran"

@@ -6,8 +6,8 @@ sources:
     schema: google_sheets # this is the schema our raw data lives in
     #database: DEV_BRONZE_DB_ALUMNO_6 # this is the name of our database
     database: |  
-        {%- if  target.name == 'user_dev' -%} dev_bronze_db_alumno_6 
-        {%- elif target.name == 'ci' -%} dev_bronze_db_alumno_6 
+        {%- if  target.name == 'user_dev' -%} dev_bronze_db_alumno_6
+        {%- elif target.name == 'ci' -%} dev_bronze_db_alumno_6
         {%- elif target.name == 'pro'-%} pro_bronze_db_alumno_6
         {%- else -%} {{target.database}}_bronze_db_alumno_6
         {%- endif -%}
@@ -27,7 +27,26 @@ sources:
       - name: budget
         columns:
           - name: _row
+            description: "Campo clave"
+            tests:
+            - unique
+            - not_null
+
           - name: product_id
+            description: "Campo con la clave del producto"
+            tests:
+            - not_null
+
           - name: quantity
+            description: "Cantidad prevista del producto"
+            tests:
+            - dbt_utils.expression_is_true:
+                expression: '>0' 
+
           - name: month
+            description: "Fecha del mes de presupuesto"
+            tests:
+            - not_null
+
           - name: _fivetran_synced
+            description: "Fecha de sincronizacion de fivetran"
