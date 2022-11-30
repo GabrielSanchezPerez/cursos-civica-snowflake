@@ -8,7 +8,7 @@ sources:
     #database: dev_bronze_db_alumno_6 # this is the name of our database
     database: |  
         {%- if  target.name == 'user_dev' -%} dev_bronze_db_alumno_6 
-        {%- elif target.name == 'ci' -%} dev_bronze_db_alumno_6 
+        {%- elif target.name == 'ci' -%} pro_bronze_db_alumno_6 
         {%- elif target.name == 'pro'-%} pro_bronze_db_alumno_6
         {%- else -%} {{target.database}}_bronze_db_alumno_6
         {%- endif -%}
@@ -95,6 +95,9 @@ sources:
             description: "Campo clave de direccion"
             tests:
             - not_null
+            - relationships:
+                  to: source('sql_server_dbo','address')
+                  field: address_id
 
           - name: order_cost
             description: "Coste del pedido"
@@ -127,9 +130,13 @@ sources:
 
           - name: tracking_id
             description: "Campo clave de tracking"
+            tests:
+            - not_null
 
           - name: shipping_service
-            description: "Servicio de reparto"
+            description: "Indica la empresa de reparto"
+            tests:
+            - not_null
 
           - name: _fivetran_deleted
             description: "Fecha de borrado fivetran"
@@ -150,9 +157,6 @@ sources:
             tests:
             - unique
             - not_null
-            - relationships:
-                  to: source('sql_server_dbo','order_items')
-                  field: product_id
 
           - name: name
             description: "Nombre del producto"
@@ -183,42 +187,46 @@ sources:
 
 
       - name: users
-        description: "Tabla de usuarios"
+        description: "Tabla con los datos de los usuarios"
         columns:
           - name: user_id
             description: "Campo clave del usuario"
             tests:
             - unique
             - not_null
-#            - relationships:
-#                  to: source('sql_server_dbo','orders')
-#                  field: user_id
 
           - name: created_at
             description: "Fecha creacion"
 
           - name: phone_number
             description: "Numero de telefono del usuario"
+            tests:
+            - not_null
 
           - name: total_orders
             description: "Pedidos totales del usuario"
 
           - name: email
             description: "Correo electronico"
+            tests:
+            - not_null
 
           - name: updated_at
             description: "Fecha actualizacion"
 
           - name: last_name
-            description: "Apellidos"
+            description: "Apellidos del usuario"
 
           - name: address_id
             description: "Campo clave foranea de direccion"
             tests:
             - not_null
+            - relationships:
+                  to: source('sql_server_dbo','addresses')
+                  field: address_id
 
           - name: first_name
-            description: "Nombre"
+            description: "Nombre del usuario"
             tests:
             - not_null
 
@@ -247,10 +255,6 @@ sources:
 
           - name: product_id
             description: "Campo clave del producto"
-            tests:
-#            - relationships:
-#                  to: source('sql_server_dbo','products')
-#                  field: product_id
 
           - name: event_type
             description: "Tipo de evento"
@@ -269,17 +273,12 @@ sources:
             - not_null
 
           - name: order_id
-            description: "Campo clave del pedido"
-            tests:
-            - not_null
-#            - relationships:
-#                  to: source('sql_server_dbo','orders')
-#                  field: order_id
+            description: "Campo clave del pedido en caso de haberlo"
 
           - name: page_url
             description: "URL del evento"
             tests:
-#            - not_null
+            - not_null
 
           - name: _fivetran_deleted
             description: "Campo de metadata fivetran"
@@ -309,11 +308,50 @@ sources:
                 
           - name: address
             description: "Direccion"
+
           - name: state
             description: "Estado"
+            tests:
+            - not_null
+
           - name: country
             description: "Pais"
+            tests:
+            - not_null
+
           - name: _fivetran_deleted
             description: "Campo de metadata fivetran"
+            
+          - name: _fivetran_synced
+            description: "Fecha de sincronizacion fivetran"
+
+
+
+      - name: promos
+        description: "Tabla a modo de catalogo donde se almacenan las promociones aplicables a los productos"
+        columns:
+          - name: promo_id
+            description: "Campo clave de la promocion"
+            tests:
+            - unique
+            - not_null
+
+          - name: discount
+            description: "Porcentaje del descuento de la promoción"
+            tests:
+            - not_null
+            - dbt_utils.expression_is_true:
+                expression: '>0'
+
+          - name: status
+            description: "Estado de la promocion"
+            tests:
+            - not_null
+            - accepted_values: 
+                  values: ['inactive', 'active']
+
+          - name: _fivetran_deleted
+            description: "Campo de metadata fivetran"
+
           - name: _fivetran_synced
             description: "Fecha de sincronizacion fivetran"

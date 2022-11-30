@@ -7,20 +7,20 @@ sources:
     #database: DEV_BRONZE_DB_ALUMNO_6 # this is the name of our database
     database: |  
         {%- if  target.name == 'user_dev' -%} dev_bronze_db_alumno_6
-        {%- elif target.name == 'ci' -%} dev_bronze_db_alumno_6
+        {%- elif target.name == 'ci' -%} pro_bronze_db_alumno_6
         {%- elif target.name == 'pro'-%} pro_bronze_db_alumno_6
         {%- else -%} {{target.database}}_bronze_db_alumno_6
         {%- endif -%}
 
-        
+# SE LE INDICA SI LE PONE COMILLAS A LOS CAMPOS PARA SNOWFLAKE        
     quoting:
       database: false
       schema: false
-      identifier: false
+      identifier: false #SI SE PONE A TRUE NOS QUITAMOS EL PROBLEMA DEL CASE SENSITIVE PORQUE LO METE ENTRE ""
 
-    freshness:
-      warn_after: {count: 24, period: hour}
-      error_after: {count: 48, period: hour}
+#    freshness:
+#      warn_after: {count: 24, period: hour}
+#      error_after: {count: 48, period: hour}
 
     tables:
 
@@ -31,15 +31,21 @@ sources:
             tests:
             - unique
             - not_null
+            - dbt_utils.expression_is_true:
+                expression: '>0'
 
           - name: product_id
             description: "Campo con la clave del producto"
             tests:
             - not_null
+            - relationships:
+                  to: source('sql_server_dbo','products')
+                  field: product_id
 
           - name: quantity
             description: "Cantidad prevista del producto"
             tests:
+            - not_null
             - dbt_utils.expression_is_true:
                 expression: '>0' 
 
