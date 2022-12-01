@@ -6,15 +6,18 @@
 
 
 WITH source AS (
-    select * 
-    from {{ source('sql_server_dbo', 'addresses') }}
+    SELECT * 
+    FROM {{ source('sql_server_dbo', 'addresses') }}
 ),
 
 renamed as (
-    select
+    SELECT
         TRIM(address_id) AS address_id,
         CASE 
-            WHEN TRIM(zipcode) > 10000 AND TRIM(zipcode) < 99998 THEN TRIM(zipcode)
+            WHEN TRIM(zipcode) > 10000 
+                                AND TRIM(zipcode) < 99998
+                                AND LEN(TRIM(zipcode)) = 5 
+              THEN TRIM(zipcode)
             ELSE 99999
         END AS zipcode ,
         TRIM(UPPER(address)) AS address,
@@ -22,7 +25,8 @@ renamed as (
         TRIM(UPPER(country)) AS country,
         _fivetran_deleted,
         _fivetran_synced
-    from source
+    FROM source
 )
 
-select * from renamed
+SELECT * 
+FROM renamed

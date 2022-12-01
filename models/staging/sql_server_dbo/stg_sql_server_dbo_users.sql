@@ -28,7 +28,8 @@ renamed_casted AS (
     FROM users
     )
 
-SELECT * FROM renamed_casted
+SELECT * 
+FROM renamed_casted
 
 
 
