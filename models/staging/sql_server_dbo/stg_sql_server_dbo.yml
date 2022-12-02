@@ -1,0 +1,294 @@
+version: 2
+
+
+
+models:
+  - name: stg_sql_server_dbo_address
+    description: "Tabla de direcciones"
+    columns:
+      - name: address_id
+        description: "Campo clave de la direccion"
+
+      - name: zipcode
+        description: "Codigo postal"
+        tests:
+        - not_null
+        - dbt_expectations.expect_column_values_to_be_between:
+            min_value: 10000  # (Optional)
+            max_value: 99999 # (Optional)
+            strictly: false
+
+      - name: address
+        description: "Direccion"
+
+      - name: state
+        description: "Estado"
+
+      - name: country
+        description: "Pais"
+
+      - name: _fivetran_deleted
+        description: "Campo de metadata fivetran"
+
+      - name: _fivetran_synced
+        description: "Fecha de sincronizacion fivetran"
+
+
+
+
+
+  - name: stg_sql_server_dbo_date
+    description: "Tabla de fecha"
+    columns:
+      - name: fecha_forecast
+        description: "Fecha de pronostico"
+
+      - name: id_date
+        description: " Campo clave de la fecha"
+        tests:
+        - not_null
+
+      - name: anio
+        description: "Campo año"
+
+      - name: mes
+        description: " Campo mes"
+        tests:
+        - dbt_expectations.expect_column_values_to_be_between:
+            min_value: 1  # (Optional)
+            max_value: 12 # (Optional)
+            strictly: false
+
+      - name: desc_mes
+        description: "Descripcion del mes"
+
+      - name: id_anio_mes
+        description: "Campo clave para año mes"
+        tests:
+        - not_null
+
+      - name: dia_previo
+        description: "Dia anterior"
+
+      - name: anio_semana_dia
+        description: "Campo que indica el año semana y dia"
+
+      - name: semana
+        description: "Semana"
+  
+
+
+
+
+
+  - name: stg_sql_server_dbo_events
+    description: "Tabla de los eventos de pedidos"
+    columns:
+      - name: event_id
+        description: "Campo clave"
+
+      - name: created_at
+        description: "Fecha de creacion del registro"
+
+      - name: product_id
+        description: "Campo clave del producto"
+
+      - name: event_type
+        description: "Tipo de evento"
+
+      - name: user_id
+        description: "Campo clave del usuario"
+
+      - name: session_id
+        description: "Campo clave de la sesion"
+
+      - name: order_id
+        description: "Campo clave del pedido en caso de haberlo"
+
+      - name: page_url
+        description: "URL del evento"
+
+      - name: _fivetran_deleted
+        description: "Campo de metadata fivetran"
+
+      - name: _fivetran_synced
+        description: "Fecha de sincronizacion fivetran"
+
+
+
+
+
+  - name: stg_sql_server_dbo_order_items
+    description: "Tabla donde aparece la cantidad de productos que tiene cada pedido"
+    columns:
+      - name: order_id
+        description: "Campo clave pedido"
+
+      - name: product_id
+        description: "Campo clave producto"
+
+      - name: quantity
+        description: "Cantidad del producto"
+        tests:
+        - not_null
+
+      - name: _fivetran_deleted
+        description: "Fecha de borrado de fivetran"
+
+      - name: _fivetran_synced
+        description: "Fecha de sincronizacion de fivetran"
+
+
+
+
+
+
+  - name: stg_sql_server_dbo_orders
+    description: "Tabla de hechos de pedidos"
+    columns:
+      - name: order_id
+        description: "Campo clave del pedido"
+
+      - name: shipping_service
+        description: "Indica la empresa de reparto"
+        tests:
+        - not_null
+
+      - name: shipping_cost_euros
+        description: "Coste del envio"
+
+      - name: address_id
+        description: "Campo clave de direccion"
+
+      - name: created_at
+        description: "Fecha de creacion del registro"
+
+      - name: promo_id
+        description: "Campo clave de promocion"
+        tests:
+        - not_null
+
+      - name: estimated_delivery_at
+        description: "Fecha estimada de entrega"
+
+      - name: order_cost
+        description: "Coste del pedido"
+
+      - name: user_id
+        description: "Campo clave de usuario"
+
+      - name: order_total
+        description: "Pedido total"
+
+      - name: delivered_at
+        description: "Fecha de entrega"
+
+      - name: tracking_id
+        description: "Campo clave de tracking"
+
+      - name: status
+        description: "Estado del pedido"
+
+      - name: _fivetran_deleted
+        description: ""
+
+      - name: _fivetran_synced
+        description: ""
+
+
+
+
+
+
+
+  - name: stg_sql_server_dbo_products
+    description: "Tabla de productos"
+    columns:
+      - name: product_id
+        description: "Campo clave del producto"
+
+      - name: name
+        description: "Nombre del producto"
+
+      - name: price_euros
+        description: "Precio del producto"
+
+      - name: inventory
+        description: "Inventario del producto"
+
+      - name: _fivetran_deleted
+        description: "Fecha de borrado de fivetran"
+
+      - name: _fivetran_synced
+        description: "Fecha de sincronizacion de fivetran"
+
+
+
+
+
+
+
+  - name: stg_sql_server_dbo_promos
+    description: "Tabla a modo de catalogo donde se almacenan las promociones aplicables a los productos"
+    columns:
+      - name: promo_id
+        description: "Campo clave de la promocion"
+
+      - name: disconut_porcentaje
+        description: "Porcentaje del descuento de la promoción"
+
+      - name: status
+        description: "Estado de la promocion"
+
+      - name: _fivetran_deleted
+        description: "Campo de metadata fivetran"
+
+      - name: _fivetran_synced
+        description: "Fecha de sincronizacion fivetran"
+
+
+
+
+
+
+
+
+  - name: stg_sql_server_dbo_users
+    description: "Tabla con los datos de los usuarios"
+    columns:
+      - name: user_id
+        description: "Campo clave del usuario"
+
+      - name: updated_at
+        description: "Fecha actualizacion"
+
+      - name: address_id
+        description: "Campo clave foranea de direccion"
+
+      - name: last_name
+        description: "Apellidos del usuario"
+
+      - name: created_at
+        description: "Fecha creacion"
+
+      - name: phone_number
+        description: "Numero de telefono del usuario"
+        tests:
+        - not_null
+        - dbt_expectations.expect_column_values_to_match_regex_list:
+            regex_list: ["[0-9]{10}"]
+
+      - name: first_name
+        description: "Nombre del usuario"
+
+      - name: email
+        description: "Correo electronico"
+        tests:
+        - dbt_expectations.expect_column_values_to_match_like_pattern:
+            like_pattern: "%@%.%"
+
+      - name: _fivetran_deleted
+        description: "Fecha borrado fivetran"
+
+      - name: _fivetran_synced
+        description: "Fecha sincronizacion fivetran"

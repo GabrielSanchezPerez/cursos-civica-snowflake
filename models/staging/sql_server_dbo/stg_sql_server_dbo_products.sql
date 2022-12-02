@@ -10,7 +10,6 @@ WITH source AS (
 ),
 
 renamed AS (
-
     SELECT
         TRIM(product_id) AS product_id,
         TRIM(UPPER(name)) as name,
@@ -19,7 +18,6 @@ renamed AS (
         _fivetran_deleted,
         _fivetran_synced
     FROM source
-
 )
 
 SELECT * 
