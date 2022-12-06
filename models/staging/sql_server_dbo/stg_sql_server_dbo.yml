@@ -40,13 +40,15 @@ models:
   - name: stg_sql_server_dbo_date
     description: "Tabla de fecha"
     columns:
-      - name: fecha_forecast
-        description: "Fecha de pronostico"
 
-      - name: id_date
+      - name: date_id
         description: " Campo clave de la fecha"
         tests:
         - not_null
+        - unique
+
+      - name: fecha_forecast
+        description: "Fecha de pronostico"
 
       - name: anio
         description: "Campo año"
@@ -190,10 +192,10 @@ models:
         description: "Estado del pedido"
 
       - name: _fivetran_deleted
-        description: ""
+        description: "Fecha de borrado de fivetran"
 
       - name: _fivetran_synced
-        description: ""
+        description: "Fecha de sincronizacion de fivetran"
 
 
 

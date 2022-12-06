@@ -17,6 +17,7 @@ renamed_casted AS (
         , address
         , state
         , country
+        , date_load
     FROM stg_address
     )
 

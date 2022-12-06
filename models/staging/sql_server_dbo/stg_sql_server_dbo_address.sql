@@ -24,7 +24,7 @@ renamed as (
         TRIM(UPPER(state)) AS state,
         TRIM(UPPER(country)) AS country,
         _fivetran_deleted,
-        _fivetran_synced
+        _fivetran_synced AS date_load
     FROM source_address
 )
 

@@ -16,7 +16,7 @@ renamed AS (
         TRIM(price) AS price_euros,
         TRIM(inventory) AS inventory,
         _fivetran_deleted,
-        _fivetran_synced
+        _fivetran_synced AS date_load
     FROM source_products
 )
 

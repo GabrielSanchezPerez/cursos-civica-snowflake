@@ -15,8 +15,7 @@ renamed_casted AS (
           promo_id
         , disconut_porcentaje
         , status
-        , _fivetran_deleted
-        , _fivetran_synced
+        , date_load
     FROM stg_promos
     )
 

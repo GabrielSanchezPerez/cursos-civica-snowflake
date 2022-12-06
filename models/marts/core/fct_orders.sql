@@ -16,6 +16,7 @@ renamed_casted AS (
         , user_id 
         , promo_id
         , address_id
+        , TO_CHAR(created_at, 'YYYYMMDD') AS date_id
         , created_at
         , order_cost_eur
         , shipping_cost_eur

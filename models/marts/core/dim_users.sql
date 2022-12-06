@@ -15,13 +15,13 @@ renamed_casted AS (
           user_id
         , updated_at
         , address_id
+        ,TO_CHAR(created_at, 'YYYYMMDD') AS date_id
         , last_name
         , created_at
         , phone_number
         , first_name
         , email
-        , _fivetran_deleted
-        , _fivetran_synced
+        , date_load
     FROM stg_users
     )
 

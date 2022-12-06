@@ -1,0 +1,179 @@
+version: 2
+
+
+models:
+  
+  - name: dim_addresses
+    description: "Dimension de direcciones"
+    columns:
+      - name: address_id
+        description: "Campo clave de la direccion"
+
+      - name: zipcode
+        description: "Codigo postal"
+        
+      - name: address
+        description: "Direccion"
+
+      - name: state
+        description: "Estado"
+
+      - name: country
+        description: "Pais"
+
+      - name: date_load
+        description: "Fecha de carga del dato"
+
+
+  - name: dim_date
+    description: "Dimension de fecha"
+    columns:
+
+      - name: date_id
+        description: " Campo clave de la fecha"
+        
+      - name: fecha_forecast
+        description: "Fecha de pronostico"
+
+      - name: anio
+        description: "Campo año"
+
+      - name: mes
+        description: " Campo mes"
+        
+      - name: desc_mes
+        description: "Descripcion del mes"
+
+      - name: id_anio_mes
+        description: "Campo clave para año mes"
+        tests:
+        - not_null
+
+      - name: dia_previo
+        description: "Dia anterior"
+
+      - name: anio_semana_dia
+        description: "Campo que indica el año semana y dia"
+
+      - name: semana
+        description: "Semana"
+
+
+
+  - name: dim_promos
+    description: "Dimension a modo de catalogo donde se almacenan las promociones aplicables a los productos"
+    columns:
+      - name: promo_id
+        description: "Campo clave de la promocion"
+
+      - name: disconut_porcentaje
+        description: "Porcentaje del descuento de la promoción"
+
+      - name: status
+        description: "Estado de la promocion"
+
+      - name: _fivetran_deleted
+        description: "Campo de metadata fivetran"
+
+      - name: date_load
+        description: "Fecha de carga del dato"
+
+
+
+
+  - name: dim_users
+    description: "Dimension con los datos de los usuarios"
+    columns:
+      - name: user_id
+        description: "Campo clave del usuario"
+
+      - name: updated_at
+        description: "Fecha actualizacion"
+
+      - name: address_id
+        description: "Campo clave foranea de direccion"
+      
+      - name: date_id
+        description: "Campo clave foranea de fecha"
+        tests:
+        - relationships:
+                to: ref('dim_date')
+                field: date_id
+      
+      - name: last_name
+        description: "Apellidos del usuario"
+
+      - name: created_at
+        description: "Fecha creacion"
+
+      - name: phone_number
+        description: "Numero de telefono del usuario"
+        
+      - name: first_name
+        description: "Nombre del usuario"
+
+      - name: email
+        description: "Correo electronico"
+              
+      - name: date_load
+        description: "Fecha de carga del dato"
+
+
+
+
+
+  - name: fct_orders
+    description: "Tabla de hechos de hechos de pedidos"
+    columns:
+      - name: order_id
+        description: "Campo clave del pedido"
+
+      - name: user_id
+        description: "Campo clave de usuario"
+      
+      - name: promo_id
+        description: "Campo clave de promocion"
+      
+      - name: address_id
+        description: "Campo clave de direccion"
+      
+      - name: date_id
+        description: "Campo clave foraneo de dimension fecha"
+        tests:
+        - relationships:
+                to: ref('dim_date')
+                field: date_id
+      
+      - name: created_at
+        description: "Fecha de creacion del registro"
+      
+      - name: order_cost_eur
+        description: "Coste del pedido en euros"
+      
+      - name: shipping_cost_eur
+        description: "Coste del envio"
+      
+      - name: order_total_eur
+        description: "Pedido total"
+      
+      - name: tracking_id
+        description: "Campo clave de tracking"
+      
+      - name: shipping_service
+        description: "Indica la empresa de reparto"
+        
+      - name: estimated_delivery_at
+        description: "Fecha estimada de entrega"
+
+      - name: delivered_at
+        description: "Fecha de entrega"
+
+      - name: days_to_deliver
+        description: "Dias para la entrega"
+
+      - name: status
+        description: "Estado del pedido"
+      
+      - name: date_load
+        description: "Fecha de carga del dato"
+

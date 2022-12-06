@@ -18,13 +18,13 @@ renamed_casted AS (
         , TRIM(UPPER(last_name)) AS last_name
         , CAST(created_at AS DATE) AS created_at
         , CASE
-            WHEN LEN(REPLACE(phone_number, '-', '')) = 10 THEN REPLACE(phone_number, '-', '')
-            ELSE 9999999999
+            WHEN LEN(REPLACE(phone_number, '-', '')) = 10 THEN TO_CHAR(REPLACE(phone_number, '-', ''))
+            ELSE '9999999999'
           END AS phone_number
         , TRIM(UPPER(first_name)) AS first_name
         , TRIM(UPPER(email)) AS email
         , _fivetran_deleted
-        , _fivetran_synced
+        , _fivetran_synced AS date_load
     FROM source_users
     )
 
