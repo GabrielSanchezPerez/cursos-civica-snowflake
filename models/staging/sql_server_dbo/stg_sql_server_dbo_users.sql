@@ -5,7 +5,7 @@
 }}
 
 
-WITH users AS (
+WITH source_users AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'users') }}
     ),
@@ -25,7 +25,7 @@ renamed_casted AS (
         , TRIM(UPPER(email)) AS email
         , _fivetran_deleted
         , _fivetran_synced
-    FROM users
+    FROM source_users
     )
 
 SELECT * 

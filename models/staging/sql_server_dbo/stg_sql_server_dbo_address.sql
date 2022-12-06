@@ -5,7 +5,7 @@
 }}
 
 
-WITH source AS (
+WITH source_address AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'addresses') }}
 ),
@@ -25,7 +25,7 @@ renamed as (
         TRIM(UPPER(country)) AS country,
         _fivetran_deleted,
         _fivetran_synced
-    FROM source
+    FROM source_address
 )
 
 SELECT * 

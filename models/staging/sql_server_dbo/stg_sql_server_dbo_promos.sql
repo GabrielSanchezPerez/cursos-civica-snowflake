@@ -6,7 +6,7 @@
 
 
 
-WITH source AS (
+WITH source_promos AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'promos') }}
 ),
@@ -18,7 +18,7 @@ renamed AS (
         TRIM(UPPER(status)) AS status,
         _fivetran_deleted,
         _fivetran_synced
-    FROM source
+    FROM source_promos
 )
 
 SELECT * 

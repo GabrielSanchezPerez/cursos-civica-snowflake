@@ -4,7 +4,7 @@
   )
 }}
 
-WITH source AS (
+WITH source_products AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'products') }}
 ),
@@ -17,7 +17,7 @@ renamed AS (
         TRIM(inventory) AS inventory,
         _fivetran_deleted,
         _fivetran_synced
-    FROM source
+    FROM source_products
 )
 
 SELECT * 

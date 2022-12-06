@@ -5,7 +5,7 @@
 }}
 
 
-WITH source AS (
+WITH source_events AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'events') }}
 ),
@@ -23,7 +23,7 @@ renamed AS (
         TRIM(page_url) AS page_url,
         _fivetran_deleted,
         _fivetran_synced
-    FROM source
+    FROM source_events
 )
 
 SELECT * 

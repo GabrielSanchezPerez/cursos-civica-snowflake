@@ -5,7 +5,7 @@
 }}
 
 
-WITH source AS (
+WITH source_order_items AS (
     SELECT * 
     FROM {{ source('sql_server_dbo', 'order_items') }}
 ),
@@ -21,7 +21,7 @@ renamed AS (
             END AS quantity,
         _fivetran_deleted,
         _fivetran_synced
-    FROM source
+    FROM source_order_items
 )
 
 SELECT * 
